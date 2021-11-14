@@ -1,23 +1,10 @@
 import mock from '@/fake-db/mock'
+import { getters } from '~/store'
 
-const data = {
-    users: [
-        {
-            id: 1,
-            fullName: 'Galen Slixby',
-            company: 'Yotz PVT LTD',
-            role: 'editor',
-            username: 'gslixby0',
-            country: 'El Salvador',
-            contact: '(479) 232-9151',
-            email: 'gslixby0@abc.net.au',
-            currentPlan: 'enterprise',
-            status: 'inactive',
-            avatar: '',
-        },
+console.log(getters.students)
+const students = getters.student;
 
-    ],
-}
-mock.onGet("/students").reply(200, {
-    users: data.users,
-});
+
+// mock.onGet("/students").reply(200, {
+//     users: 'selam',
+// });
