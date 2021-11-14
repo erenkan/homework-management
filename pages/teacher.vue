@@ -35,7 +35,7 @@
               <hr v-if="student" />
               <div class="mt-5" v-if="student">
                 <h5>
-                  {{student.fullName}}
+                  {{ student.fullName }}
                 </h5>
                 <b-list-group
                   v-for="(homework, index) in student.homeWorks"
@@ -64,7 +64,14 @@
                       <b-badge variant="danger" pill v-if="homework.isOverdue"
                         >Overdue</b-badge
                       >
-                      <b-badge variant="info" pill v-if="!homework.isOverdue && !homework.status && !homework.isDone"
+                      <b-badge
+                        variant="info"
+                        pill
+                        v-if="
+                          !homework.isOverdue &&
+                          !homework.status &&
+                          !homework.isDone
+                        "
                         >Cancelled</b-badge
                       >
                     </div>
@@ -85,7 +92,7 @@
 export default {
   data() {
     return {
-      teacher: null,
+      teacher: {} as object,
       ownStudents: null,
       selectedStudent: null,
       student: null,
@@ -98,7 +105,7 @@ export default {
   },
   methods: {
     async getTeacher(id: any): Promise<void> {
-      const response = await this.$store.dispatch('fetchTeacher', id)
+      const response = await this.$store.dispatch('teacher/fetchTeacher', id)
       if (response) {
         this.teacher = response
         this.ownStudents = this.teacher.OwnStudents.map((a: any) => {
@@ -110,7 +117,7 @@ export default {
       }
     },
     selectStudent(node: object) {
-      this.student = this.teacher.OwnStudents.find((b) => b.id === node.id)
+      this.student = this.teacher.OwnStudents.find((b: any) => b.id === node.id)
     },
   },
 }

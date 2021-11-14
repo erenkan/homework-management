@@ -142,6 +142,7 @@ export default Vue.extend({
         mail: this.mail,
         password: this.password,
       })
+      console.log(response)
       if (response) {
         this.userRole = response.loginAs
         if (response.loginAs === 'student') {
@@ -150,6 +151,8 @@ export default Vue.extend({
         if (response.loginAs === 'teacher') {
           this.$router.push({ name: 'teacher', params: { id: response.id } })
         }
+      } else {
+        this.makeToast('warning','You have entered an invalid username or password');
       }
     },
     async getStudents(): Promise<void> {
@@ -159,22 +162,13 @@ export default Vue.extend({
     async setStudents(): Promise<void> {
       const response = await this.$store.dispatch('setStudent')
     },
-  },
-  computed: {
-    count(): number {
-      // ADD
-      return this.counter
+    makeToast(variant: String,body: String) {
+      this.$bvToast.toast(body, {
+        title: `Warning`,
+        variant: variant,
+        solid: true,
+      })
     },
-  },
-  watch: {
-    // userRole(val) {
-    //   if (val === 'student') {
-    //     this.$router.push({ name: 'student', params: { id: 1 } })
-    //   }
-    //   if (val === 'teacher') {
-    //     this.$router.push({ name: 'teacher', params: { id: 1 } })
-    //   }
-    // },
   },
 })
 </script>

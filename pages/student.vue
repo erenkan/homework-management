@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     async getStudent(id: String): Promise<void> {
-      const response = await this.$store.dispatch('fetchStudent', id)
+      const response = await this.$store.dispatch('student/fetchStudent', id)
       if (response) {
         this.student = response
       }
