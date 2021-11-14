@@ -23,6 +23,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/fake-db/db.ts',
+    { src: '~/plugins/vue-tree-select.js', ssr: false }
+
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

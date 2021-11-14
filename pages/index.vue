@@ -94,8 +94,14 @@
           </button>
         </div>
       </form>
-      <p class="text-center text-gray-500 text-xs">&copy;Smartface Inc</p>
     </div>
+    <div class="w-1/2 bg-white rounded-lg shadow">
+      <ul class="divide-y-2 divide-gray-100">
+        <li class="p-3">Teacher: teacher@nayanlewis.com : nayan</li>
+        <li class="p-3">Student: student@erenkan.com : eren</li>
+      </ul>
+    </div>
+    <p class="mt-3 text-center text-gray-500 text-xs">&copy;Smartface Inc</p>
   </b-container>
 </template>
 
@@ -120,9 +126,15 @@ export default Vue.extend({
         mail: this.mail,
         password: this.password,
       })
-      console.log(response)
+      console.log('index login response', response)
       if (response) {
         this.userRole = response.loginAs
+        if (response.loginAs === 'student') {
+          this.$router.push({ name: 'student', params: { id: response.id } })
+        }
+          if (response.loginAs === 'teacher') {
+          this.$router.push({ name: 'teacher', params: { id: response.id } })
+        }
       }
       // if (this.loginType === 'student') {
       //   const response = await this.$store.dispatch('Login', {
@@ -154,14 +166,14 @@ export default Vue.extend({
     },
   },
   watch: {
-    userRole(val) {
-      if (val === 'student') {
-        this.$router.push({ name: 'student', params: { id: 1 } })
-      }
-       if (val === 'teacher') {
-        this.$router.push({ name: 'teacher', params: { id: 1 } })
-      }
-    },
+    // userRole(val) {
+    //   if (val === 'student') {
+    //     this.$router.push({ name: 'student', params: { id: 1 } })
+    //   }
+    //   if (val === 'teacher') {
+    //     this.$router.push({ name: 'teacher', params: { id: 1 } })
+    //   }
+    // },
   },
 })
 </script>
