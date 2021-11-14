@@ -62,18 +62,21 @@ export type RootState = ReturnType<typeof state>
 
 export const mutations: MutationTree<RootState> = {
     CHANGE_NAME: (state, payload) => {
-      state.students.push(payload);
+        state.students.push(payload);
     },
-  }
-  
+}
+
 export const actions: ActionTree<RootState, RootState> = {
-    async fetchStudent({ commit, getters }, id) {
+    async fetchStudent({ commit }, id) {
         const student = state().students.find(student => student.id === id)
         if (student) {
             return student
         } else {
             return false;
         }
+    },
+    async fetchStudents({ commit }, id) {
+        return state().students
     },
     async setStudent({ commit }, payload) {
         commit('CHANGE_NAME', payload)

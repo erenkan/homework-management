@@ -36,18 +36,6 @@ export const state = () => ({
             ]
         },
         {
-            id: 2,
-            fullName: 'Anwen Giles',
-            mail: 'student@anwengiles.com',
-            homeWorks: [{
-                lesson: 'Math',
-                description: 'solve the problems in math book',
-                status: true,
-                isDone: false,
-                assignment: null,
-            }]
-        },
-        {
             id: 3,
             fullName: 'Gavin Scott',
             mail: 'student@gavinscott.com',
@@ -66,18 +54,6 @@ export const state = () => ({
         userId: 5,
         fullName: 'Hibba Mayer',
         OwnStudents: [
-            {
-                id: 2,
-                fullName: 'Anwen Giles',
-                mail: 'student@anwengiles.com',
-                homeWorks: [{
-                    lesson: 'Math',
-                    description: 'solve the problems in math book',
-                    status: true,
-                    isDone: false,
-                    assignment: null,
-                }]
-            },
             {
                 id: 3,
                 fullName: 'Gavin Scott',
@@ -146,8 +122,8 @@ export const mutations: MutationTree<RootState> = {
 }
 
 export const actions: ActionTree<RootState, RootState> = {
-    async fetchTeacher({ commit, getters }, id) {
-        const teacher = state().teachers.find(teacher => teacher.userId === id)
+    async fetchTeachers({ commit, getters }, id) {
+        const teacher = state().teachers
         if (teacher) {
             return teacher
         } else {
@@ -156,8 +132,6 @@ export const actions: ActionTree<RootState, RootState> = {
 
         // commit('CHANGE_NAME', 'New name')
     },
-    async setStudent({ commit }, payload) {
-        commit('CHANGE_NAME', payload)
-    },
+
 
 }

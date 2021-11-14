@@ -1,7 +1,7 @@
 <template>
   <!-- <Tutorial /> -->
   <b-container>
-    <div class="w-full max-w-xs">
+    <div class="w-full max-w-md">
       <link
         href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css"
         rel="stylesheet"
@@ -92,11 +92,37 @@
           >
             Sign In
           </button>
+          <button
+            class="
+              bg-red-500
+              hover:bg-red-700
+              text-white
+              font-bold
+              py-2
+              px-4
+              rounded
+              focus:outline-none focus:shadow-outline
+            "
+            type="button"
+            @click="
+              loginType = 'admin'
+              Login()
+            "
+          >
+            Sign In (Admin)
+          </button>
         </div>
       </form>
     </div>
     <div class="w-1/2 bg-white rounded-lg shadow">
       <ul class="divide-y-2 divide-gray-100">
+        <li class="p-3">
+          <h6 class="font-weight-bold">Admin</h6>
+
+          <ul class="divide-y-2 divide-gray-100">
+            <li>admin@smartface.io : smartface</li>
+          </ul>
+        </li>
         <li class="p-3">
           <h6 class="font-weight-bold">Teacher</h6>
 
@@ -136,7 +162,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async Login(): Promise<void> {
+    async Login(isAdmin: String): Promise<void> {
       const response = await this.$store.dispatch('Login', {
         role: this.loginType,
         mail: this.mail,
@@ -151,8 +177,14 @@ export default Vue.extend({
         if (response.loginAs === 'teacher') {
           this.$router.push({ name: 'teacher', params: { id: response.id } })
         }
+        if (response.loginAs === 'admin') {
+          this.$router.push({ name: 'admin' })
+        }
       } else {
-        this.makeToast('warning','You have entered an invalid username or password');
+        this.makeToast(
+          'warning',
+          'You have entered an invalid username or password'
+        )
       }
     },
     async getStudents(): Promise<void> {
@@ -162,7 +194,7 @@ export default Vue.extend({
     async setStudents(): Promise<void> {
       const response = await this.$store.dispatch('setStudent')
     },
-    makeToast(variant: String,body: String) {
+    makeToast(variant: String, body: String) {
       this.$bvToast.toast(body, {
         title: `Warning`,
         variant: variant,
