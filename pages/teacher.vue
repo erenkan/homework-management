@@ -26,22 +26,58 @@
               <div class="mt-2">
                 <h5>My Students</h5>
                 <treeselect
-                  v-model="value"
+                  v-model="selectedStudent"
                   :multiple="false"
                   :options="ownStudents"
+                  @select="selectStudent"
                 />
               </div>
-              <div class="mt-5" v-if="selectedStudent">
-                  
+              <hr v-if="student" />
+              <div class="mt-5" v-if="student">
+                <h5>
+                  {{student.fullName}}
+                </h5>
+                <b-list-group
+                  v-for="(homework, index) in student.homeWorks"
+                  :key="index"
+                >
+                  <b-list-group-item
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>
+                      {{ homework.description }}
+                    </span>
+                    <div>
+                      <b-badge variant="success" pill v-if="homework.isDone"
+                        >Done</b-badge
+                      >
+                      <b-badge
+                        variant="warning"
+                        pill
+                        v-if="
+                          !homework.isDone &&
+                          !homework.isOverdue &&
+                          homework.status
+                        "
+                        >Pending</b-badge
+                      >
+                      <b-badge variant="danger" pill v-if="homework.isOverdue"
+                        >Overdue</b-badge
+                      >
+                      <b-badge variant="info" pill v-if="!homework.isOverdue && !homework.status && !homework.isDone"
+                        >Cancelled</b-badge
+                      >
+                    </div>
 
-
+                    <!-- <b-badge variant="primary" pill>{{ home }}</b-badge> -->
+                  </b-list-group-item>
+                </b-list-group>
               </div>
             </b-card-text>
           </b-card-body>
         </b-col>
       </b-row>
     </b-card>
-    <b-card></b-card>
   </b-container>
 </template>
 
@@ -49,10 +85,10 @@
 export default {
   data() {
     return {
-      value: null,
       teacher: null,
       ownStudents: null,
       selectedStudent: null,
+      student: null,
     }
   },
   created() {
@@ -63,7 +99,6 @@ export default {
   methods: {
     async getTeacher(id: any): Promise<void> {
       const response = await this.$store.dispatch('fetchTeacher', id)
-      console.log('get teacher',response)
       if (response) {
         this.teacher = response
         this.ownStudents = this.teacher.OwnStudents.map((a: any) => {
@@ -73,6 +108,9 @@ export default {
           }
         })
       }
+    },
+    selectStudent(node: object) {
+      this.student = this.teacher.OwnStudents.find((b) => b.id === node.id)
     },
   },
 }

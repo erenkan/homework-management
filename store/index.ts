@@ -2,8 +2,7 @@ import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import mock from '@/fake-db/mock'
 
 export const state = () => ({
-  things: [] as string[],
-  name: 'Me',
+  // Users
   users: [{
     id: 1,
     role: 'student',
@@ -16,7 +15,7 @@ export const state = () => ({
     role: 'student',
     fullName: 'Anwen Giles',
     mail: 'student@anwengiles.com',
-    password: 'eren'
+    password: 'anwen'
   },
   {
     id: 3,
@@ -46,38 +45,63 @@ export const state = () => ({
     mail: 'teacher@abbywarren.com',
     password: 'abby'
   }],
+  // Students
   students: [{
     id: 1,
     fullName: 'Eren Kan',
     mail: 'student@erenkan.com',
+    homeWorks: [{
+      lesson: 'Math',
+      description: 'solve the problems in math book',
+      status: true,
+      isDone: false,
+      isOverdue: false,
+      assignment: null,
+    },
+    {
+      lesson: 'Tech',
+      description: 'lab test',
+      status: false,
+      isDone: true,
+      isOverdue: false,
+      assignment: null,
+    },
+    {
+      lesson: 'Reading',
+      description: 'read the book',
+      status: false,
+      isDone: false,
+      isOverdue: false,
+      assignment: null,
+    }]
   },
   {
     id: 2,
     fullName: 'Anwen Giles',
     mail: 'student@anwengiles.com',
+    homeWorks: [{
+      lesson: 'Math',
+      description: 'solve the problems in math book',
+      status: true,
+      isDone: false,
+      assignment: null,
+    }]
   },
   {
     id: 3,
     role: 'student',
     fullName: 'Gavin Scott',
     mail: 'student@gavinscott.com',
+    homeWorks: [{
+      lesson: 'Math',
+      description: 'solve the problems in math book',
+      status: true,
+      isDone: false,
+      assignment: null,
+    }]
   },
   ],
-  test: [
-    {
-      id: 1,
-      userId: 4,
-      fullName: 'Nayan Lewis',
-      OwnStudents: [{
-        id: 1,
-        mail: 'student@erenkan.com',
-        fullName: 'Eren Kan',
-      },
-
-      {},
-      ]
-    }
-  ],
+  // Teachers
   teachers: [{
     id: 1,
     userId: 4,
@@ -91,8 +115,26 @@ export const state = () => ({
         description: 'solve the problems in math book',
         status: true,
         isDone: false,
+        isOverdue: false,
         assignment: null,
-      }]
+      },
+      {
+        lesson: 'Tech',
+        description: 'lab test',
+        status: false,
+        isDone: true,
+        isOverdue: false,
+        assignment: null,
+      },
+      {
+        lesson: 'Reading',
+        description: 'read the book',
+        status: false,
+        isDone: false,
+        isOverdue: false,
+        assignment: null,
+      }
+      ]
     },
     {
       id: 2,
@@ -111,10 +153,10 @@ export const state = () => ({
       fullName: 'Gavin Scott',
       mail: 'student@gavinscott.com',
       homeWorks: [{
-        lesson: 'Math',
-        description: 'solve the problems in math book',
+        lesson: 'Tech',
+        description: 'lab test',
         status: true,
-        isDone: false,
+        isDone: true,
         assignment: null,
       }]
     }
@@ -124,47 +166,36 @@ export const state = () => ({
     id: 2,
     userId: 5,
     fullName: 'Hibba Mayer',
-    OwnStudents: [{
-      id: 1,
-      mail: 'student@erenkan.com',
-      fullName: 'Eren Kan',
-      homeWorks: [{
-        lesson: 'Math',
-        description: 'solve the problems in math book',
-        status: true,
-        isDone: false,
-        assignment: null,
-      }]
-    },
-    {
-      id: 2,
-      fullName: 'Anwen Giles',
-      mail: 'student@anwengiles.com',
-      homeWorks: [{
-        lesson: 'Math',
-        description: 'solve the problems in math book',
-        status: true,
-        isDone: false,
-        assignment: null,
-      }]
-    },
-    {
-      id: 3,
-      fullName: 'Gavin Scott',
-      mail: 'student@gavinscott.com',
-      homeWorks: [{
-        lesson: 'Math',
-        description: 'solve the problems in math book',
-        status: true,
-        isDone: false,
-        assignment: null,
-      }]
-    }
+    OwnStudents: [
+      {
+        id: 2,
+        fullName: 'Anwen Giles',
+        mail: 'student@anwengiles.com',
+        homeWorks: [{
+          lesson: 'Math',
+          description: 'solve the problems in math book',
+          status: true,
+          isDone: false,
+          assignment: null,
+        }]
+      },
+      {
+        id: 3,
+        fullName: 'Gavin Scott',
+        mail: 'student@gavinscott.com',
+        homeWorks: [{
+          lesson: 'Math',
+          description: 'solve the problems in math book',
+          status: true,
+          isDone: false,
+          assignment: null,
+        }]
+      }
     ]
   },
   {
     id: 3,
-    userId: 5,
+    userId: 6,
     fullName: 'Abby Warren',
     OwnStudents: [{
       id: 1,
@@ -195,8 +226,8 @@ export const state = () => ({
       fullName: 'Gavin Scott',
       mail: 'student@gavinscott.com',
       homeWorks: [{
-        lesson: 'Math',
-        description: 'solve the problems in math book',
+        lesson: 'Science',
+        description: 'chemical reaction examples',
         status: true,
         isDone: false,
         assignment: null,
@@ -222,7 +253,6 @@ export const mutations: MutationTree<RootState> = {
 export const actions: ActionTree<RootState, RootState> = {
   async fetchStudents({ commit }) {
     const things = await this.$axios.get('/students')
-    // commit('CHANGE_NAME', 'New name')
     return things
   },
   async fetchStudent({ commit, getters }, id) {
@@ -232,24 +262,11 @@ export const actions: ActionTree<RootState, RootState> = {
     } else {
       return false;
     }
-
-    // commit('CHANGE_NAME', 'New name')
   },
   async fetchTeacher({ commit, getters }, id) {
     const teacher = state().teachers.find(teacher => teacher.userId === id)
     if (teacher) {
       return teacher
-    } else {
-      return false;
-    }
-
-    // commit('CHANGE_NAME', 'New name')
-  },
-  async fetchOwnStudents({ commit, getters }, id) {
-    const students = state().students.filter(student => student.id === id)
-    console.log('fetchOwnStudents', students)
-    if (students.length > 0) {
-      return students
     } else {
       return false;
     }

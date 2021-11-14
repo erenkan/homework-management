@@ -97,8 +97,24 @@
     </div>
     <div class="w-1/2 bg-white rounded-lg shadow">
       <ul class="divide-y-2 divide-gray-100">
-        <li class="p-3">Teacher: teacher@nayanlewis.com : nayan</li>
-        <li class="p-3">Student: student@erenkan.com : eren</li>
+        <li class="p-3">
+          <h6 class="font-weight-bold">Teacher</h6>
+
+          <ul class="divide-y-2 divide-gray-100">
+            <li>teacher@nayanlewis.com : nayan</li>
+            <li>teacher@hibbamayer.com : hibba</li>
+            <li>teacher@abbywarren.com : abby</li>
+          </ul>
+        </li>
+        <li class="p-3">
+          <h6 class="font-weight-bold">Student</h6>
+
+          <ul class="divide-y-2 divide-gray-100">
+            <li>student@erenkan.com : eren</li>
+            <li>student@gavinscott.com : gavin</li>
+            <li>student@anwengiles.com : anven</li>
+          </ul>
+        </li>
       </ul>
     </div>
     <p class="mt-3 text-center text-gray-500 text-xs">&copy;Smartface Inc</p>
@@ -126,34 +142,19 @@ export default Vue.extend({
         mail: this.mail,
         password: this.password,
       })
-      console.log('index login response', response)
       if (response) {
         this.userRole = response.loginAs
         if (response.loginAs === 'student') {
           this.$router.push({ name: 'student', params: { id: response.id } })
         }
-          if (response.loginAs === 'teacher') {
+        if (response.loginAs === 'teacher') {
           this.$router.push({ name: 'teacher', params: { id: response.id } })
         }
       }
-      // if (this.loginType === 'student') {
-      //   const response = await this.$store.dispatch('Login', {
-      //     role: 'student',
-      //     mail: this.mail,
-      //     password: this.password,
-      //   })
-      //   if (response) {
-      //     console.log(response)
-      //     this.userRole = 'student'
-      //   }
-      // }
     },
     async getStudents(): Promise<void> {
-      // const response = await this.$axios.get('/students')
       const response = await this.$store.dispatch('fetchStudents')
-      // console.log(this.$store);
       this.students = response.data.students
-      console.log('INDEX RESPONSE', response)
     },
     async setStudents(): Promise<void> {
       const response = await this.$store.dispatch('setStudent')
