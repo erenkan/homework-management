@@ -196,7 +196,7 @@
         >
           <div class="w-full md:w-6/12 px-4 mx-auto text-center">
             <div class="text-sm text-blueGray-500 font-semibold py-1">
-              Smarface Inc
+              Smartface Inc
             </div>
           </div>
         </div>
