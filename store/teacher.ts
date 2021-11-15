@@ -122,8 +122,8 @@ export const mutations: MutationTree<RootState> = {
 }
 
 export const actions: ActionTree<RootState, RootState> = {
-    async fetchTeachers({ commit, getters }, id) {
-        const teacher = state().teachers
+    fetchTeacher({ commit, getters }, id) {
+        const teacher = state().teachers.find(teacher => teacher.userId === id)
         if (teacher) {
             return teacher
         } else {
