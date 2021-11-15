@@ -14,8 +14,16 @@ $ yarn build
 $ yarn start
 
 ```
+
+### What i have used: 
+- Tailwind css for the login page.
+- Nuxtjs - to fast develop without create any route.
+- Vuex - to store my mock data.
+- <s>Axios mock adapter - to simulate http requests</s> scratch that
+- Vue-Treeselect - to list teachers and students
+- Bootstrap-vue - to build some boxes
 ### The principle: 
-- You have to check the sign in as teacher if you login as teacher. Otherwise you can login with stuendt account
+- You have to check the sign in as teacher if you login as teacher. Otherwise you can login with student account
 
 ### Posibble Errors
 
