@@ -129,8 +129,15 @@ export const actions: ActionTree<RootState, RootState> = {
         } else {
             return false;
         }
+    },
+    async fetchTeachers({ commit, getters }, id) {
+        const teacher = state().teachers
+        if (teacher) {
+            return teacher
+        } else {
+            return false;
+        }
 
-        // commit('CHANGE_NAME', 'New name')
     },
 
 
