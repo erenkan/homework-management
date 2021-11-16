@@ -14,12 +14,11 @@
             <b-card-text>
               <b-media tag="li">
                 <template #aside>
-                  <b-avatar
-                    href="#bar"
-                    src="https://picsum.photos/id/1005/5760/3840"
-                  ></b-avatar>
+                  <b-avatar href="#bar" :src="teacher.avatar"></b-avatar>
                 </template>
-                <h5 class="mt-0 mb-1">{{ teacher.fullName }}</h5>
+                <h5 class="mt-0 mb-1">
+                  {{ teacher.firstName }} {{ teacher.lastName }}
+                </h5>
                 <p class="mb-0">teacher</p>
               </b-media>
               <hr />
@@ -28,15 +27,21 @@
                 <treeselect
                   v-model="selectedStudent"
                   :multiple="false"
-                  :options="ownStudents"
+                  :options="ownStudentsList"
                   @select="selectStudent"
                 />
               </div>
               <hr v-if="student" />
               <div class="mt-5" v-if="student">
-                <h5>
-                  {{ student.fullName }}
-                </h5>
+                <div class="d-flex justify-content-between mb-2">
+                  <h5>{{ student.firstName }} {{ student.lastName }}</h5>
+                  <b-button
+                    variant="outline-success"
+                    size="sm"
+                    v-b-modal.modal-prevent-closing
+                    >Assign New</b-button
+                  >
+                </div>
                 <b-list-group
                   v-for="(homework, index) in student.homeWorks"
                   :key="index"
@@ -75,8 +80,6 @@
                         >Cancelled</b-badge
                       >
                     </div>
-
-                    <!-- <b-badge variant="primary" pill>{{ home }}</b-badge> -->
                   </b-list-group-item>
                 </b-list-group>
               </div>
@@ -84,6 +87,30 @@
           </b-card-body>
         </b-col>
       </b-row>
+
+      <b-modal
+        id="modal-prevent-closing"
+        ref="modal"
+        title="Submit Your Homework"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="handleOk"
+      >
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group label="Lesson" label-for="name-input">
+            <b-form-input
+              id="lesson-input"
+              v-model="homeWorkPayload.lesson"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group label="Description" label-for="name-input">
+            <b-form-input
+              id="description-input"
+              v-model="homeWorkPayload.description"
+            ></b-form-input>
+          </b-form-group>
+        </form>
+      </b-modal>
     </b-card>
   </b-container>
 </template>
@@ -92,10 +119,19 @@
 export default {
   data() {
     return {
-      teacher: {} as object,
-      ownStudents: null,
-      selectedStudent: null,
+      teacher: {} as Record<string, any>,
+      teacherCopy: {} as Record<string, any>,
+      ownStudentsList: [] as Record<string, any>[],
+      selectedStudent: null as unknown,
       student: null,
+      homeWorkPayload: {
+        lesson: null,
+        description: null,
+        dueDate: null,
+        status: true,
+        isDone: false,
+        isOverdue: false,
+      } as Record<string, any>,
     }
   },
   created() {
@@ -108,16 +144,52 @@ export default {
       const response = await this.$store.dispatch('teacher/fetchTeacher', id)
       if (response) {
         this.teacher = response
-        this.ownStudents = this.teacher.OwnStudents.map((a: any) => {
+        this.teacherCopy = response
+        console.log('this.teacher', this.teacher)
+        this.ownStudentsList = this.teacher.ownStudents.map((a: any) => {
           return {
             id: a.id,
-            label: a.fullName,
+            label: `${a.firstName} ${a.lastName}`,
           }
         })
       }
     },
-    selectStudent(node: object) {
-      this.student = this.teacher.OwnStudents.find((b: any) => b.id === node.id)
+    selectStudent(node: { id: any }): void {
+      this.student = this.teacher.ownStudents.find((b: any) => b.id === node.id)
+    },
+    resetModal() {
+      this.homeWorkPayload.lesson = null
+      this.homeWorkPayload.description = null
+    },
+    handleOk(bvModalEvt: { preventDefault: () => void }) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
+    },
+    async handleSubmit() {
+      // Push the name to submitted names
+      let modifiedOwnStudents = this.teacherCopy.ownStudents.map((a: any) => {
+        if (a.id === this.selectedStudent) {
+          a.homeWorks.push(this.homeWorkPayload)
+        }
+        return a
+      })
+      console.log('modifiedOwnStudents', modifiedOwnStudents)
+
+      // let payload = {
+      //   homeWork: this.homeWorkPayload,
+      //   teacherId: this.teacher.id,
+      // }
+      // const response = await this.$store.dispatch(
+      //   'teacher/createHomeWork',
+      //   payload
+      // )
+      // console.log('response', response)
+      // Hide the modal manually
+      this.$nextTick(() => { 
+        this.$bvModal.hide('modal-prevent-closing')
+      })
     },
   },
 }

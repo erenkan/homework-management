@@ -56,19 +56,23 @@ export const state = () => ({
         }]
     },
     ],
+    testStudents: []
 
 })
 export type RootState = ReturnType<typeof state>
 
+export const getters: GetterTree<RootState, RootState> = {
+    testStudents: (state) => state.testStudents,
+}
 export const mutations: MutationTree<RootState> = {
-    CHANGE_NAME: (state, payload) => {
-        state.students.push(payload);
+    SET_STUDENTS: (state, payload) => {
+        state.testStudents = payload
     },
 }
 
 export const actions: ActionTree<RootState, RootState> = {
-    async fetchStudent({ commit }, id) {
-        const student = state().students.find(student => student.id === id)
+    async fetchStudent({ getters }, id) {
+        const student = getters.testStudents.find((student: { id: any }) => student.id === id)
         if (student) {
             return student
         } else {
@@ -81,5 +85,23 @@ export const actions: ActionTree<RootState, RootState> = {
     async setStudent({ commit }, payload) {
         commit('CHANGE_NAME', payload)
     },
+    async getTest({ commit }, id) {
+        const studentResponse: Record<string, any> = await this.$axios.get(
+            'https://6192b13fd3ae6d0017da823e.mockapi.io/api/students'
+        )
+        commit('SET_STUDENTS', studentResponse.data)
+        let studentList: any[] = []
+        if (studentResponse) {
+            studentList = studentResponse.data.map((student: { id: any; firstName: any; lastName: any; password: any; mail: any }) => {
+                return {
+                    id: student.id,
+                    label: `${student.firstName} ${student.lastName}`,
+                    password: student.password,
+                    mail: student.mail
+                }
+            })
+        }
+        return studentList;
+    }
 
 }

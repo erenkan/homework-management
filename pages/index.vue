@@ -160,6 +160,26 @@
         </div>
       </div>
       <div class="w-full bg-white rounded-lg shadow">
+        <div class="d-flex justify-content-between">
+          <b-form-group label="Teachers" class="p-3">
+            <treeselect
+              v-model="selectedTeacher"
+              :load-options="getTestTeachers"
+              :multiple="false"
+              :options="teachers"
+              @select="selectedTeacherEvent"
+            />
+          </b-form-group>
+          <b-form-group label="Students" class="p-3">
+            <treeselect
+              v-model="selectedStudent"
+              :load-options="getTest"
+              :multiple="false"
+              :options="students"
+              @select="selectedStudentEvent"
+            />
+          </b-form-group>
+        </div>
         <ul class="divide-y-2 divide-gray-100">
           <li class="p-3">
             <h6 class="font-weight-bold">Admin</h6>
@@ -215,12 +235,30 @@ export default Vue.extend({
       mail: null,
       password: null,
       students: null,
-      counter: 0,
+      teachers: null,
+      selectedStudent: null,
+      selectedTeacher: null,
     }
   },
 
+  // created(): void {
+  //   this.getTest()
+  // },
+
   methods: {
-    async Login(isAdmin: String): Promise<void> {
+    selectedStudentEvent(node: Record<string, any>): void {
+      this.selectedTeacher = null
+      this.mail = node.mail
+      this.password = node.password
+      this.loginType = 'student'
+    },
+    selectedTeacherEvent(node: Record<string, any>): void {
+      this.selectedStudent = null
+      this.mail = node.mail
+      this.password = node.password
+      this.loginType = 'teacher'
+    },
+    async Login(): Promise<void> {
       const response = await this.$store.dispatch('Login', {
         role: this.loginType,
         mail: this.mail,
@@ -248,6 +286,18 @@ export default Vue.extend({
     async getStudents(): Promise<void> {
       const response = await this.$store.dispatch('fetchStudents')
       this.students = response.data.students
+    },
+    async getTest(): Promise<void> {
+      const response = await this.$store.dispatch('student/getTest')
+      if (response) {
+        this.students = response
+      }
+    },
+    async getTestTeachers(): Promise<void> {
+      const response = await this.$store.dispatch('teacher/getTest')
+      if (response) {
+        this.teachers = response
+      }
     },
     async setStudents(): Promise<void> {
       const response = await this.$store.dispatch('setStudent')

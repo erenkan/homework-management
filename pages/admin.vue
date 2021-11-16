@@ -51,8 +51,8 @@ export default {
       teachersTree: null,
     }
   },
-  created() {
-    this.getStudents()
+  created(): void {
+    this.getStudents()  
     this.getTeachers()
   },
   methods: {
@@ -60,7 +60,7 @@ export default {
       const response = await this.$store.dispatch('student/fetchStudents')
       if (response) {
         this.students = response
-        this.studentsTree = response.map((student) => {
+        this.studentsTree = response.map((student: { id: any; fullName: any }) => {
           return {
             id: student.id,
             label: student.fullName,

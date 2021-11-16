@@ -20,7 +20,7 @@
                       src="https://placekitten.com/300/300"
                     ></b-avatar>
                   </template>
-                  <h5 class="mt-0 mb-1">{{ student.fullName }}</h5>
+                  <h5 class="mt-0 mb-1"> {{ student.firstName }} {{ student.lastName }}</h5>
                   <p class="mb-0">
                     You have {{student.homeWorks.length}} homework to do.
                   </p>
@@ -93,6 +93,7 @@ export default {
   methods: {
     async getStudent(id: String): Promise<void> {
       const response = await this.$store.dispatch('student/fetchStudent', id)
+      console.log('StudentResponse',response)
       if (response) {
         this.student = response
       }

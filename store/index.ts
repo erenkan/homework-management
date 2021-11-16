@@ -1,5 +1,4 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-
 export const state = () => ({
   // Users
   users: [
@@ -58,16 +57,41 @@ export const state = () => ({
 export type RootState = ReturnType<typeof state>
 
 export const actions: ActionTree<RootState, RootState> = {
-  async Login({ commit }, payload) {
-    console.log(payload)
-    let response = state().users.find(usr => usr.role === payload.role && usr.password === payload.password && usr.mail === payload.mail)
-    if (response) {
-      return {
-        loginAs: payload.role,
-        id: response.id
+  async Login({ commit, rootState }, payload) {
+    console.log('payload', payload)
+    console.log('root', rootState)
+    if (payload.role === 'teacher') {
+      const foundTeacher = rootState.teacher.testTeachers.find((teacher: { mail: any; password: any; }) => teacher.mail === payload.mail && teacher.password === payload.password)
+      console.log('foundTeacher', foundTeacher)
+      if (foundTeacher) {
+        return {
+          loginAs: payload.role,
+          id: foundTeacher.id
+        }
+      }
+    }
+    else if (payload.role === 'student') {
+      const foundStudent = rootState.student.testStudents.find((teacher: { mail: any; password: any; }) => teacher.mail === payload.mail && teacher.password === payload.password)
+      console.log('foundStudent', foundStudent)
+      if (foundStudent) {
+        return {
+          loginAs: payload.role,
+          id: foundStudent.id
+        }
       }
     } else {
       return false
+
     }
+
+    // let response = state().users.find(usr => usr.role === payload.role && usr.password === payload.password && usr.mail === payload.mail)
+    // if (response) {
+    //   return {
+    //     loginAs: payload.role,
+    //     id: response.id
+    //   }
+    // } else {
+    //   return false
+    // }
   },
 }
