@@ -22,7 +22,10 @@ $ yarn start
 - <s>Axios mock adapter - to simulate http requests</s> scratch that
 - Vue-Treeselect - to list teachers and students
 - Bootstrap-vue - to build some boxes
-- Mockapi - i stored my student/teacher/admin data into the [Mockapi](https://mockapi.io/clone/6192b13fd3ae6d0017da823f)
+- Mockapi - i stored my student/teacher/admin data into the [Mockapi](https://mockapi.io/)
+- Mockapi - [Students](https://6192b13fd3ae6d0017da823e.mockapi.io/api/students)
+- Mockapi - [Teachers](https://6192b13fd3ae6d0017da823e.mockapi.io/api/teachers)
+- Mockapi - [Admin](https://6192b13fd3ae6d0017da823e.mockapi.io/api/admin)
 ### The principle: 
 - You have to check the sign in as teacher if you login as teacher. Otherwise you can login with student account
 
