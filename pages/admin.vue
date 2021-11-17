@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container v-if="admin">
     <b-card no-body>
       <b-row no-gutters>
         <b-col md="6">
@@ -12,13 +12,23 @@
         <b-col md="6">
           <b-card-body title="Admin Dashboard">
             <hr />
+            <b-media tag="li">
+              <template #aside>
+                <b-avatar href="#bar" :src="admin.avatar"></b-avatar>
+              </template>
+              <h5 class="mt-0 mb-1">
+                {{ admin.name }}
+              </h5>
+              <p class="mb-0">Admin</p>
+            </b-media>
+            <hr />
             <b-row>
               <b-col>
                 <b-form-group label="Students">
                   <treeselect
                     v-model="selectedStudent"
                     :multiple="false"
-                    :options="studentsTree"
+                    :options="studentList"
                   />
                 </b-form-group>
               </b-col>
@@ -40,51 +50,48 @@
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       selectedStudent: null,
-      students: null,
-      studentsTree: null,
       selectedTeacher: null,
-      teachers: null,
-      teachersTree: null,
     }
   },
+  computed: {
+    ...mapGetters({
+      teachers: 'teacher/teachers',
+      studentList: 'student/studentsList',
+    }),
+    teachersTree(): any {
+      return this.$store.getters['teacher/teachers'].map((teacher: any) => {
+        return {
+          label: `${teacher.firstName} ${teacher.lastName}`,
+          id: teacher.id,
+          children: teacher.ownStudents.map((student: any) => {
+            return {
+              label: `${student.firstName} ${student.lastName}`,
+              id: `${student.id}_${student.firstName}`,
+            }
+          }),
+        }
+      })
+    },
+    admin(): any {
+      return this.$store.getters['admin'][0]
+    },
+  },
   created(): void {
-    this.getStudents()  
     this.getTeachers()
+    this.getStudents()
   },
   methods: {
-    async getStudents(): Promise<void> {
-      const response = await this.$store.dispatch('student/fetchStudents')
-      if (response) {
-        this.students = response
-        this.studentsTree = response.map((student: { id: any; fullName: any }) => {
-          return {
-            id: student.id,
-            label: student.fullName,
-          }
-        })
-      }
+    getStudents(): void {
+      this.$store.dispatch('student/getStudents')
     },
-    async getTeachers(): Promise<void> {
-      const response = await this.$store.dispatch('teacher/fetchTeachers')
-      if (response) {
-        this.teachers = response
-        this.teachersTree = response.map((teacher) => {
-          return {
-            id: teacher.id,
-            label: teacher.fullName,
-            children: teacher.OwnStudents.map((child) => {
-              return {
-                id: child.fullName,
-                label: child.fullName,
-              }
-            }),
-          }
-        })
-      }
+    getTeachers(): void {
+      this.$store.dispatch('teacher/getTeachers')
     },
   },
 }

@@ -1,91 +1,53 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
 
 export const state = () => ({
-    students: [{
-        id: 1,
-        fullName: 'Eren Kan',
-        mail: 'student@erenkan.com',
-        homeWorks: [{
-            lesson: 'Math',
-            description: 'solve the problems in math book',
-            status: true,
-            isDone: false,
-            isOverdue: false,
-            assignment: null,
-        },
-        {
-            lesson: 'Tech',
-            description: 'lab test',
-            status: false,
-            isDone: true,
-            isOverdue: false,
-            assignment: null,
-        },
-        {
-            lesson: 'Reading',
-            description: 'read the book',
-            status: false,
-            isDone: false,
-            isOverdue: false,
-            assignment: null,
-        }]
-    },
-    {
-        id: 2,
-        fullName: 'Anwen Giles',
-        mail: 'student@anwengiles.com',
-        homeWorks: [{
-            lesson: 'Math',
-            description: 'solve the problems in math book',
-            status: true,
-            isDone: false,
-            assignment: null,
-        }]
-    },
-    {
-        id: 3,
-        role: 'student',
-        fullName: 'Gavin Scott',
-        mail: 'student@gavinscott.com',
-        homeWorks: [{
-            lesson: 'Math',
-            description: 'solve the problems in math book',
-            status: true,
-            isDone: false,
-            assignment: null,
-        }]
-    },
-    ],
-    testStudents: []
+    students: [] as any,
+    studentsList: [] as any,
 
 })
 export type RootState = ReturnType<typeof state>
 
 export const getters: GetterTree<RootState, RootState> = {
-    testStudents: (state) => state.testStudents,
+    studentsList: (state) => state.studentsList,
+    getStudentById: (state) => (id: number) => {
+        return state.students.find((student: { id: number }) => student.id === id)
+    }
 }
 export const mutations: MutationTree<RootState> = {
-    SET_STUDENTS: (state, payload) => {
-        state.testStudents = payload
-    },
+    SET_STUDENTS: (state, payload) => (state.students = payload),
+    SET_STUDENTS_LIST: (state, payload: Record<string, any>) => (state.studentsList = payload),
 }
 
 export const actions: ActionTree<RootState, RootState> = {
+        /**
+     * @instance {getters} to get the students from state
+     */
     async fetchStudent({ getters }, id) {
-        const student = getters.testStudents.find((student: { id: any }) => student.id === id)
+        const student = getters.students.find((student: { id: any }) => student.id === id)
         if (student) {
             return student
         } else {
             return false;
         }
     },
-    async fetchStudents({ commit }, id) {
-        return state().students
+    /**
+ * @instance {dispatch} to dispatch the action
+ * @param {payload} to get payload data from the main dispatcher
+ */
+    async setStudentHomework({ dispatch }, payload) {
+        const studentResponse: Record<string, any> = await this.$axios.put(
+            `https://6192b13fd3ae6d0017da823e.mockapi.io/api/students/${payload.studentId}`, {
+            homeWorks: payload.ownStudents.find((student: { id: any }) => student.id === payload.studentId).homeWorks
+        }
+        );
+        if (studentResponse) {
+            dispatch('getStudents')
+        }
     },
-    async setStudent({ commit }, payload) {
-        commit('CHANGE_NAME', payload)
-    },
-    async getTest({ commit }, id) {
+    /**
+  * @instance {commit} to commit the mutation
+  */
+    async getStudents({ commit }) {
         const studentResponse: Record<string, any> = await this.$axios.get(
             'https://6192b13fd3ae6d0017da823e.mockapi.io/api/students'
         )
@@ -100,8 +62,8 @@ export const actions: ActionTree<RootState, RootState> = {
                     mail: student.mail
                 }
             })
+            commit('SET_STUDENTS_LIST', studentList);
         }
-        return studentList;
     }
 
 }

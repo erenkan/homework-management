@@ -22,6 +22,7 @@ $ yarn start
 - <s>Axios mock adapter - to simulate http requests</s> scratch that
 - Vue-Treeselect - to list teachers and students
 - Bootstrap-vue - to build some boxes
+- Mockapi - i stored my student/teacher/admin data into the [Mockapi](https://mockapi.io/clone/6192b13fd3ae6d0017da823f)
 ### The principle: 
 - You have to check the sign in as teacher if you login as teacher. Otherwise you can login with student account
 
@@ -31,6 +32,7 @@ $ yarn start
 
 - You can be lost your route in Admin page.
 
+- You can be face the ts type errors due to vue types.
 ### Not working
 
 - You cant upload any doc to the set assigment for the students's homework

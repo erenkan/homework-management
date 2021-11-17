@@ -15,26 +15,32 @@
               <b-col cols="5">
                 <b-media tag="li">
                   <template #aside>
-                    <b-avatar
-                      href="#bar"
-                      src="https://placekitten.com/300/300"
-                    ></b-avatar>
+                    <b-avatar href="#bar" :src="student.avatar"></b-avatar>
                   </template>
-                  <h5 class="mt-0 mb-1"> {{ student.firstName }} {{ student.lastName }}</h5>
+                  <h5 class="mt-0 mb-1">
+                    {{ student.firstName }} {{ student.lastName }}
+                  </h5>
                   <p class="mb-0">
-                    You have {{student.homeWorks.length}} homework to do.
+                    You have {{ student.homeWorks.length }} homework to do.
                   </p>
                 </b-media>
               </b-col>
-              <b-col cols="7"> 
+              <b-col cols="7">
                 <b-list-group
                   v-for="(homework, index) in student.homeWorks"
                   :key="index"
                 >
                   <b-list-group-item
-                    class="d-flex justify-content-between align-items-center"
+                    class="
+                      d-flex
+                      justify-content-between
+                      align-items-center
+                      mb-1
+                    "
                   >
                     <span>
+                      <h6 class="font-weight-bold">{{ homework.lesson }}</h6>
+
                       {{ homework.description }}
                     </span>
                     <div>
@@ -81,24 +87,16 @@
 <script lang="ts">
 export default {
   data() {
-    return {
-      student: null,
-    }
+    return {}
   },
-  created() {
-    if (this.$route.params && this.$route.params.id !== undefined) {
-      this.getStudent(this.$route.params.id)
-    }
-  },
-  methods: {
-    async getStudent(id: String): Promise<void> {
-      const response = await this.$store.dispatch('student/fetchStudent', id)
-      console.log('StudentResponse',response)
-      if (response) {
-        this.student = response
-      }
+  computed: {
+    student(): Record<string, any> {
+      return this.$store.getters['student/getStudentById'](
+        this.$route.params.id
+      )
     },
   },
+  methods: {},
 }
 </script>
 

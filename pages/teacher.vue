@@ -4,7 +4,7 @@
       <b-row no-gutters>
         <b-col md="4">
           <b-card-img
-            src="https://picsum.photos/id/1/400/500"
+            src="https://pbs.twimg.com/media/FCnssfMXIAoganT.jpg"
             alt="Image"
             class="rounded-0"
           ></b-card-img>
@@ -27,14 +27,22 @@
                 <treeselect
                   v-model="selectedStudent"
                   :multiple="false"
-                  :options="ownStudentsList"
+                  :options="ownStudentList"
                   @select="selectStudent"
                 />
               </div>
               <hr v-if="student" />
               <div class="mt-5" v-if="student">
                 <div class="d-flex justify-content-between mb-2">
-                  <h5>{{ student.firstName }} {{ student.lastName }}</h5>
+                  <b-media tag="li">
+                    <template #aside>
+                      <b-avatar href="#bar" :src="student.avatar"></b-avatar>
+                    </template>
+                    <h5 class="mt-0 mb-1">
+                      {{ student.firstName }} {{ student.lastName }}
+                    </h5>
+                    <p class="mb-0">student</p>
+                  </b-media>
                   <b-button
                     variant="outline-success"
                     size="sm"
@@ -47,9 +55,10 @@
                   :key="index"
                 >
                   <b-list-group-item
-                    class="d-flex justify-content-between align-items-center"
+                    class="d-flex justify-content-between align-items-center mb-1"
                   >
                     <span>
+                      <h6 class="font-weight-bold">{{homework.lesson}}</h6>
                       {{ homework.description }}
                     </span>
                     <div>
@@ -92,8 +101,6 @@
         id="modal-prevent-closing"
         ref="modal"
         title="Submit Your Homework"
-        @show="resetModal"
-        @hidden="resetModal"
         @ok="handleOk"
       >
         <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -119,7 +126,6 @@
 export default {
   data() {
     return {
-      teacher: {} as Record<string, any>,
       teacherCopy: {} as Record<string, any>,
       ownStudentsList: [] as Record<string, any>[],
       selectedStudent: null as unknown,
@@ -134,32 +140,24 @@ export default {
       } as Record<string, any>,
     }
   },
-  created() {
-    if (this.$route.params && this.$route.params.id !== undefined) {
-      this.getTeacher(this.$route.params.id)
-    }
+  computed: {
+    teacher(): Record<string, any> {
+      return this.$store.getters['teacher/getTeacherById'](
+        this.$route.params.id
+      )
+    },
+    ownStudentList(): Record<string, any>[] {
+      return this.teacher.ownStudents.map((a: any) => {
+        return {
+          id: a.id,
+          label: `${a.firstName} ${a.lastName}`,
+        }
+      })
+    },
   },
   methods: {
-    async getTeacher(id: any): Promise<void> {
-      const response = await this.$store.dispatch('teacher/fetchTeacher', id)
-      if (response) {
-        this.teacher = response
-        this.teacherCopy = response
-        console.log('this.teacher', this.teacher)
-        this.ownStudentsList = this.teacher.ownStudents.map((a: any) => {
-          return {
-            id: a.id,
-            label: `${a.firstName} ${a.lastName}`,
-          }
-        })
-      }
-    },
     selectStudent(node: { id: any }): void {
       this.student = this.teacher.ownStudents.find((b: any) => b.id === node.id)
-    },
-    resetModal() {
-      this.homeWorkPayload.lesson = null
-      this.homeWorkPayload.description = null
     },
     handleOk(bvModalEvt: { preventDefault: () => void }) {
       // Prevent modal from closing
@@ -169,14 +167,18 @@ export default {
     },
     async handleSubmit() {
       // Push the name to submitted names
-      let modifiedOwnStudents = this.teacherCopy.ownStudents.map((a: any) => {
+      let modifiedOwnStudents = this.teacher.ownStudents.map((a: any) => {
         if (a.id === this.selectedStudent) {
           a.homeWorks.push(this.homeWorkPayload)
         }
         return a
       })
-      console.log('modifiedOwnStudents', modifiedOwnStudents)
-
+      let payloadToSend = {
+        teacherId: this.teacher.id,
+        studentId: this.selectedStudent,
+        ownStudents: modifiedOwnStudents,
+      }
+      this.$store.dispatch('teacher/createHomeWork', payloadToSend)
       // let payload = {
       //   homeWork: this.homeWorkPayload,
       //   teacherId: this.teacher.id,
@@ -187,7 +189,7 @@ export default {
       // )
       // console.log('response', response)
       // Hide the modal manually
-      this.$nextTick(() => { 
+      this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing')
       })
     },

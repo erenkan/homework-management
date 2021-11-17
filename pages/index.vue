@@ -9,7 +9,7 @@
       href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
     />
 
-    <div class="w-full lg:w-4/12 px-4 mx-auto pt-6">
+    <div class="w-full lg:w-6/12 px-4 mx-auto pt-6">
       <div
         class="
           relative
@@ -161,52 +161,31 @@
       </div>
       <div class="w-full bg-white rounded-lg shadow">
         <div class="d-flex justify-content-between">
-          <b-form-group label="Teachers" class="p-3">
+          <b-form-group label="Teachers" label-for="studentSelect" class="p-3">
             <treeselect
               v-model="selectedTeacher"
-              :load-options="getTestTeachers"
               :multiple="false"
-              :options="teachers"
+              :options="teacherList"
               @select="selectedTeacherEvent"
             />
           </b-form-group>
-          <b-form-group label="Students" class="p-3">
+          <b-form-group label="Students" label-for="teacherSelect" class="p-3">
             <treeselect
               v-model="selectedStudent"
-              :load-options="getTest"
               :multiple="false"
-              :options="students"
+              :options="studentList"
               @select="selectedStudentEvent"
             />
           </b-form-group>
+          <b-form-group label="Admins" label-for="adminSelect" class="p-3">
+            <treeselect
+              v-model="selectedAdmin"
+              :multiple="false"
+              :options="adminList"
+              @select="selectedAdminEvent"
+            />
+          </b-form-group>
         </div>
-        <ul class="divide-y-2 divide-gray-100">
-          <li class="p-3">
-            <h6 class="font-weight-bold">Admin</h6>
-
-            <ul class="divide-y-2 divide-gray-100">
-              <li>admin@smartface.io : smartface</li>
-            </ul>
-          </li>
-          <li class="p-3">
-            <h6 class="font-weight-bold">Teacher</h6>
-
-            <ul class="divide-y-2 divide-gray-100">
-              <li>teacher@nayanlewis.com : nayan</li>
-              <li>teacher@hibbamayer.com : hibba</li>
-              <li>teacher@abbywarren.com : abby</li>
-            </ul>
-          </li>
-          <li class="p-3">
-            <h6 class="font-weight-bold">Student</h6>
-
-            <ul class="divide-y-2 divide-gray-100">
-              <li>student@erenkan.com : eren</li>
-              <li>student@gavinscott.com : gavin</li>
-              <li>student@anwengiles.com : anven</li>
-            </ul>
-          </li>
-        </ul>
       </div>
     </div>
     <footer class="relative pt-8 pb-6 mt-2">
@@ -226,6 +205,7 @@
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex'
 import Vue from 'vue'
 export default Vue.extend({
   data() {
@@ -238,25 +218,51 @@ export default Vue.extend({
       teachers: null,
       selectedStudent: null,
       selectedTeacher: null,
+      selectedAdmin: null,
     }
   },
-
-  // created(): void {
-  //   this.getTest()
-  // },
+  computed: {
+    ...mapGetters({
+      teacherList: 'teacher/teacherList',
+      studentList: 'student/studentsList',
+      adminList: 'adminList',
+    }),
+  },
+  created(): void {
+    this.getTeachers()
+    this.getStudents()
+    this.fetchAdmin()
+  },
 
   methods: {
+    /**
+     * @param {node} Record<string, any> - The record of the selected node
+     */
     selectedStudentEvent(node: Record<string, any>): void {
       this.selectedTeacher = null
+      this.selectedAdmin = null
       this.mail = node.mail
       this.password = node.password
       this.loginType = 'student'
     },
+    /**
+     * @param {node} Record<string, any> - The record of the selected node
+     */
     selectedTeacherEvent(node: Record<string, any>): void {
       this.selectedStudent = null
+      this.selectedAdmin = null
       this.mail = node.mail
       this.password = node.password
       this.loginType = 'teacher'
+    },
+    /**
+     * @param {node} Record<string, any> - The record of the selected node
+     */
+    selectedAdminEvent(node: Record<string, any>): void {
+      this.selectedTeacher = null
+      this.selectedStudent = null
+      this.mail = node.mail
+      this.password = node.password
     },
     async Login(): Promise<void> {
       const response = await this.$store.dispatch('Login', {
@@ -264,7 +270,6 @@ export default Vue.extend({
         mail: this.mail,
         password: this.password,
       })
-      console.log(response)
       if (response) {
         this.userRole = response.loginAs
         if (response.loginAs === 'student') {
@@ -283,25 +288,16 @@ export default Vue.extend({
         )
       }
     },
-    async getStudents(): Promise<void> {
-      const response = await this.$store.dispatch('fetchStudents')
-      this.students = response.data.students
+    getStudents(): void {
+      this.$store.dispatch('student/getStudents')
     },
-    async getTest(): Promise<void> {
-      const response = await this.$store.dispatch('student/getTest')
-      if (response) {
-        this.students = response
-      }
+    getTeachers(): void {
+      this.$store.dispatch('teacher/getTeachers')
     },
-    async getTestTeachers(): Promise<void> {
-      const response = await this.$store.dispatch('teacher/getTest')
-      if (response) {
-        this.teachers = response
-      }
+    fetchAdmin(): void {
+      this.$store.dispatch('fetchAdmin')
     },
-    async setStudents(): Promise<void> {
-      const response = await this.$store.dispatch('setStudent')
-    },
+
     makeToast(variant: String, body: String) {
       this.$bvToast.toast(body, {
         title: `Warning`,
