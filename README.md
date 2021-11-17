@@ -27,7 +27,7 @@ $ yarn start
 - Mockapi - [Teachers](https://6192b13fd3ae6d0017da823e.mockapi.io/api/teachers)
 - Mockapi - [Admin](https://6192b13fd3ae6d0017da823e.mockapi.io/api/admin)
 ### The principle: 
-- You have to check the sign in as teacher if you login as teacher. Otherwise you can login with student account
+- Just select student, teacher or admin. Then the credentials will be autofill.
 
 ### Posibble Errors
 
