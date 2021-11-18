@@ -18,8 +18,7 @@ $ yarn start
 ### What i have used: 
 - Tailwind css for the login page.
 - Nuxtjs - to fast develop without create any route.
-- Vuex - to store my mock data.
-- <s>Axios mock adapter - to simulate http requests</s> scratch that
+- Vuex - <s>to store my mock data.</s> to management my api calls and store/modify data
 - Vue-Treeselect - to list teachers and students
 - Bootstrap-vue - to build some boxes
 - Mockapi - i stored my student/teacher/admin data into the [Mockapi](https://mockapi.io/)
